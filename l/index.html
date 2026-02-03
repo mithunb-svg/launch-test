@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Launching StratOnBoard</title>
+
+  <script>
+    function getParam(name) {
+      return new URLSearchParams(window.location.search).get(name);
+    }
+
+    const wsId = getParam("ws_id");
+    const wsName = getParam("ws_name");
+    const wsAuthId = getParam("ws_auth_id");
+
+    const deepLink =
+      `stratonboard://launch?ws_id=${wsId}&ws_name=${wsName}&ws_auth_id=${wsAuthId}`;
+
+    const isAndroid = /android/i.test(navigator.userAgent);
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+
+    window.onload = function () {
+
+      // Try opening app first
+      window.location.href = deepLink;
+
+      setTimeout(() => {
+        if (isAndroid) {
+          // Play Store with referrer
+          window.location.href =
+            "https://play.google.com/store/apps/details?id=com.imarticus.stratonboard";
+        }
+
+        if (isIOS) {
+          document.getElementById("ios").style.display = "block";
+        }
+      }, 1500);
+    };
+  </script>
+</head>
+
+<body style="font-family: sans-serif; text-align:center; padding-top:60px;">
+  <h2>Launching StratOnBoard…</h2>
+  <p>If the app doesn’t open, install it below.</p>
+
+  <div id="ios" style="display:none;">
+    <a href="https://apps.apple.com/app/idYOUR_APP_ID">
+      <button style="padding:15px 25px;font-size:16px;">
+        Install StratOnBoard
+      </button>
+    </a>
+
+    <br/><br/>
+
+    <a id="continue" href="#">
+      <button style="padding:15px 25px;font-size:16px;">
+        Continue After Install
+      </button>
+    </a>
+
+    <script>
+      document.getElementById("continue").href = deepLink;
+    </script>
+  </div>
+</body>
+</html>
