@@ -2,7 +2,9 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>Launching StratOnBoard</title>
+  <title>Launching StratOnBoard…</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <script>
     function getParam(name) {
@@ -13,54 +15,48 @@
     const wsName = getParam("ws_name");
     const wsAuthId = getParam("ws_auth_id");
 
+    if (!wsId || !wsName || !wsAuthId) {
+      document.body.innerHTML = "<h3>Invalid launch parameters</h3>";
+      throw new Error("Missing params");
+    }
+
     const deepLink =
-      `stratonboard://launch?ws_id=${wsId}&ws_name=${wsName}&ws_auth_id=${wsAuthId}`;
+      `stratonboard://launch?ws_id=${encodeURIComponent(wsId)}` +
+      `&ws_name=${encodeURIComponent(wsName)}` +
+      `&ws_auth_id=${encodeURIComponent(wsAuthId)}`;
 
     const isAndroid = /android/i.test(navigator.userAgent);
     const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
 
-    window.onload = function () {
+    const PLAY_STORE =
+      "https://play.google.com/store/apps/details?id=com.imarticus.stratonboard";
 
-      // Try opening app first
+    const APP_STORE =
+      "https://apps.apple.com/app/idXXXXXXXXXX"; // ⬅️ replace with real App ID
+
+    window.onload = function () {
+      console.log("Launching deep link:", deepLink);
+
+      // Try opening the app
       window.location.href = deepLink;
 
+      // Fallback after 1.5s if app not installed
       setTimeout(() => {
         if (isAndroid) {
-          // Play Store with referrer
-          window.location.href =
-            "https://play.google.com/store/apps/details?id=com.imarticus.stratonboard";
-        }
-
-        if (isIOS) {
-          document.getElementById("ios").style.display = "block";
+          window.location.href = PLAY_STORE;
+        } else if (isIOS) {
+          window.location.href = APP_STORE;
+        } else {
+          document.body.innerHTML =
+            "<h3>Please open this link on a mobile device.</h3>";
         }
       }, 1500);
     };
   </script>
 </head>
 
-<body style="font-family: sans-serif; text-align:center; padding-top:60px;">
-  <h2>Launching StratOnBoard…</h2>
-  <p>If the app doesn’t open, install it below.</p>
-
-  <div id="ios" style="display:none;">
-    <a href="https://apps.apple.com/app/idYOUR_APP_ID">
-      <button style="padding:15px 25px;font-size:16px;">
-        Install StratOnBoard
-      </button>
-    </a>
-
-    <br/><br/>
-
-    <a id="continue" href="#">
-      <button style="padding:15px 25px;font-size:16px;">
-        Continue After Install
-      </button>
-    </a>
-
-    <script>
-      document.getElementById("continue").href = deepLink;
-    </script>
-  </div>
+<body style="font-family: Arial; text-align: center; margin-top: 20%;">
+  <h3>Opening StratOnBoard…</h3>
+  <p>If nothing happens, please install the app.</p>
 </body>
 </html>
