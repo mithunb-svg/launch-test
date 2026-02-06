@@ -10,7 +10,7 @@
     }
 
     const wsId = getParam("ws_id");
-    const wsName = encodeURIComponent(getParam("ws_name"));
+    const wsName = getParam("ws_name"); // ❗ NO encoding here
     const wsAuthId = getParam("ws_auth_id");
 
     const deepLink =
@@ -21,16 +21,15 @@
 
     window.onload = function () {
 
-      // Attempt to open the app
+      // Try opening app first
       window.location.href = deepLink;
 
       setTimeout(() => {
         if (isAndroid) {
-          // ✅ Android Deferred Deep Link via Install Referrer
-          const referrer =
-            encodeURIComponent(
-              `ws_id=${wsId}&ws_name=${wsName}&ws_auth_id=${wsAuthId}`
-            );
+          // ✅ Android Deferred Deep Link
+          const referrer = encodeURIComponent(
+            `ws_id=${wsId}&ws_name=${wsName}&ws_auth_id=${wsAuthId}`
+          );
 
           window.location.href =
             `https://play.google.com/store/apps/details?id=com.imarticus.stratonboard&referrer=${referrer}`;
